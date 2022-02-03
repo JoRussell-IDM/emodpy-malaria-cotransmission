@@ -1,43 +1,29 @@
-import json
-import os
-from typing import Any
+# Example DownloadAnalyzer for EMOD Experiment
+# In this example, we will demonstrate how to create an DownloadAnalyzer to download simulation output files locally
 
-from idmtools.core.interfaces.iitem import IItem
-from idmtools.entities.ianalyzer import IAnalyzer as BaseAnalyzer
-import matplotlib as mpl
+# First, import some necessary system and idmtools packages.
+from idmtools.analysis.analyze_manager import AnalyzeManager
+from idmtools.analysis.download_analyzer import DownloadAnalyzer
+from idmtools.core import ItemType
+from idmtools.core.platform_factory import Platform
 
-mpl.use('Agg')
+if __name__ == '__main__':
 
+    # Set the platform where you want to run your analysis
+    # In this case we are running in BELEGOST, but this can be changed to run 'Local'
+    with Platform('Calculon') as platform:
 
-class DownloadAnalyzer(BaseAnalyzer):
-    """
-       This analyzer is based on the DownloadAnalyzer and allows the download of files based on tags
-    """
+        # Arg option for analyzer init are uid, working_dir, data in the method map (aka select_simulation_data),
+        # and filenames
+        # In this case, we want to provide a filename to analyze
+        filenames = ['output/ReportSimpleMalariaTransmissionJSON.json','output/InsetChart.json']
+        # Initialize the analyser class with the path of the output files to download
+        analyzers = [DownloadAnalyzer(filenames=filenames, output_path='download')]
 
-    def __init__(self, filenames, name='idm'):
-        super().__init__(filenames=[filenames])
-        print(name)
+        # Set the experiment you want to analyze
+        experiment_id = 'c66fa3d2-435c-ec11-a9f1-9440c9be2c51'  # comps exp id
 
-    def initialize(self):
-        if not os.path.exists(os.path.join(self.working_dir, "output")):
-            os.mkdir(os.path.join(self.working_dir, "output"))
-
-        # output_dir = r'C:\Users\jorussell\Dropbox (IDM)\Malaria Team Folder\projects\parasite_genetics\DTK\example_with_cotransmission\transmission_report_outputs\genepi_test_suite_EIR_sweep_08112021'
-
-    def map(self, data: Any, item: IItem) -> Any:
-
-        return data[self.filenames[0]]["Channels"]["Statistical Population"]["Data"]
-
-    def reduce(self, all_data: dict) -> Any:
-        output_dir = os.path.join(self.working_dir, "output")
-
-
-if __name__ == "__main__":
-    platform = Platform('COMPS2')
-
-    filenames = ['output/InsetChart.json']
-    analyzers = [PopulationAnalyzer(working_dir=".")]
-
-    exp_id = '8bb8ae8f-793c-ea11-a2be-f0921c167861'  # comps2 exp_id
-    manager = AnalyzeManager(platform=platform, ids=[(exp_id, ItemType.EXPERIMENT)], analyzers=analyzers)
-    manager.analyze()
+        # Specify the id Type, in this case an Experiment
+        manager = AnalyzeManager(ids=[(experiment_id, ItemType.EXPERIMENT)],
+                                 analyzers=analyzers)
+        manager.analyze()

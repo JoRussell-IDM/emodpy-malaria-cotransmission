@@ -233,9 +233,10 @@ def general_sim():
     report_duration  = 100
     pop_multipliers = [1]
     import_scalar = [0.0001] # 0.000001 Explore even lower levels of import_scalar to get <0.2 True Prev
-    habitat_multipliers = np.logspace(start=-2.1, stop=0.6, num=100)
+    habitat_multipliers = np.logspace(start=-2, stop=0.4, num=100)
     seasonality_profile = 'constant'
-    experiment_name = f'LShabitat_LHM_-2to1_import_-4_withCM'
+
+    experiment_name = f'LShabitat_LHM_-2_0pt4_import_-4_withCM'
 
     # create EMODTask
     print("Creating EMODTask (from files)...")

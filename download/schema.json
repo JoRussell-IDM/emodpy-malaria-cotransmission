@@ -1,8 +1,8 @@
 {
     "Version": {
-        "DTK_Branch": "Malaria-Ongoing(c490c4e02a)",
-        "DTK_Build_Date": "Oct 18 2021",
-        "DTK_Version": "2.20.5088.0"
+        "DTK_Branch": "Malaria-Ongoing (d96b46a040)",
+        "DTK_Build_Date": "Dec  3 2021 11:17:39",
+        "DTK_Version": "2.20.5098.0"
     },
     "config": {
         "Climate.ByData": {
@@ -13345,6 +13345,35 @@
                 },
                 "class": "ReportInfectionStatsMalaria"
             },
+            "ReportInterventionPopAvg": {
+                "Duration_Days": {
+                    "default": 3.40282e+38,
+                    "description": "The number of days over which to collect report data.",
+                    "max": 3.40282e+38,
+                    "min": 0,
+                    "type": "float"
+                },
+                "Nodeset_Config": {
+                    "description": "An object that specifies for which nodes the report will collect data.",
+                    "type": "idmAbstractType:NodeSet"
+                },
+                "Report_Description": {
+                    "default": "",
+                    "description": "Augments the filename of the report. If multiple CSV reports are being generated, this allows you to distinguish among the multiple reports.",
+                    "type": "string"
+                },
+                "Sim_Types": [
+                    "MALARIA_SIM"
+                ],
+                "Start_Day": {
+                    "default": 0,
+                    "description": "The day of the simulation to start collecting data.",
+                    "max": 3.40282e+38,
+                    "min": 0,
+                    "type": "float"
+                },
+                "class": "ReportInterventionPopAvg"
+            },
             "ReportMalariaFiltered": {
                 "End_Day": {
                     "default": 3.40282e+38,
@@ -13585,6 +13614,11 @@
                     "min": 0,
                     "type": "float"
                 },
+                "Include_Human_To_Vector_Transmission": {
+                    "default": 0,
+                    "description": "If set to 1, Human-to-Vector transmission events will be included.  One can identify these events because the 'acquireIndividualId'=0 and transmitTime=acquireTime.  WARNING:  This can make the file size quite large.",
+                    "type": "bool"
+                },
                 "Nodeset_Config": {
                     "description": "An object that specifies for which nodes the report will collect data.",
                     "type": "idmAbstractType:NodeSet"
@@ -13652,6 +13686,11 @@
                         "VECTOR_BOTH_GENDERS"
                     ],
                     "type": "enum"
+                },
+                "Include_Death_By_State_Columns": {
+                    "default": 0,
+                    "description": "Adds columns for the number of vectors that died in this state during this time step as well as the average age.  It adds two columns for each of the following states: ADULT, INFECTED, INFECIOUS, and MALE.",
+                    "type": "bool"
                 },
                 "Include_Vector_State_Columns": {
                     "default": 1,
@@ -13729,6 +13768,11 @@
                 "class": "ReportVectorMigration"
             },
             "ReportVectorStats": {
+                "Include_Death_By_State_Columns": {
+                    "default": 0,
+                    "description": "Adds columns for the number of vectors that died in this state during this time step as well as the average age.  It adds two columns for each of the following states: ADULT, INFECTED, INFECIOUS, and MALE.",
+                    "type": "bool"
+                },
                 "Include_Gestation_Columns": {
                     "default": 0,
                     "description": "Adds columns for feeding and gestation",
@@ -13761,6 +13805,11 @@
                     "default": [],
                     "description": "A list of barcode strings where a column will be created with the number of vectors with sporozoites with that barcode.  One can use '*' for a wild card.  A 'BarcodeOther' column will be created for barcodes not defined.",
                     "type": "Vector String"
+                },
+                "Include_Death_By_State_Columns": {
+                    "default": 0,
+                    "description": "Adds columns for the number of vectors that died in this state during this time step as well as the average age.  It adds two columns for each of the following states: ADULT, INFECTED, INFECIOUS, and MALE.",
+                    "type": "bool"
                 },
                 "Include_Gestation_Columns": {
                     "default": 0,

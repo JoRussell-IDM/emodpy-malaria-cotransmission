@@ -12,11 +12,11 @@ from idmtools.entities import IAnalyzer
 class TimeseriesAnalyzer(IAnalyzer):
     data_group_names = ['group', 'sim_id', 'channel']
     ordered_levels = ['channel', 'group', 'sim_id']
-    output_file = 'timeseries.csv'
+    output_file = 'sim_id_mapping.csv'
 
-    def __init__(self, filenames=[os.path.join('output', 'InsetChart.json')], channels=('Statistical Population',
-                                                                                        'True Prevalence',
-                                                                                        'Blood Smear Gametocyte Prevalence'),
+    def __init__(self, filenames=[os.path.join('output', 'InsetChart.json')], channels=('Daily EIR',
+                                                                                        'PfHRP2 Prevalence',
+                                                                                        'Statistical Population'),
                  save_output=True):
 
         super(TimeseriesAnalyzer, self).__init__(filenames=filenames)
@@ -36,7 +36,7 @@ class TimeseriesAnalyzer(IAnalyzer):
     def default_plot_fn(self, df, ax):
         grouped = df.groupby(level=['group'], axis=1)
         m = grouped.mean()
-        m.plot(ax=ax, legend=False)
+        m.plot(ax=ax, legend=False, alpha = 0.2)
 
     def default_filter_fn(self, md):
         return True
@@ -71,15 +71,23 @@ class TimeseriesAnalyzer(IAnalyzer):
     def reduce(self, all_data):
         output_dir = os.path.join(self.working_dir, "output")
         selected = []
+        all_df = pd.DataFrame()
         for sim, data in all_data.items():
             # Enrich the data with info
-            data.group = self.default_group_fn(sim.uid, sim.tags)
+            sim_id = sim.uid
+            aEIR = np.mean(data['Daily EIR'][(25*365):(26*365)])*365
+            dict = {'sim_id':[sim_id], 'aEIR':[aEIR]}
+            # sim_df = pd.DataFrame(dict)
+            # all_df = pd.concat([all_df,sim_df])
+            data.group = self.default_group_fn(sim.tags['habitat_multiplier'],sim.uid)
             data.sim_id = sim.uid
             selected.append(data)
+        all_df.to_csv(os.path.join(output_dir, self.output_file))
 
         if len(selected) == 0:
             print("\n No data have been returned... Exiting...")
             return
+
 
         # Combining selected data...
         combined = pd.concat(selected, axis=1,
@@ -98,8 +106,7 @@ class TimeseriesAnalyzer(IAnalyzer):
         channels = data.columns.levels[0]
         self.plot_by_channel(channels, plot_fn)
 
-        plt.legend()
-        # plt.show()
+        plt.show()
         plt.savefig(os.path.join(output_dir, 'timeseries.png'))
 
 
@@ -107,10 +114,10 @@ if __name__ == "__main__":
     platform = Platform('Calculon')
 
     sim_id = '1b2eae64-8120-ec11-9ecd-9440c9bee941'  # comps2 exp_id
-
+    exp_id = 'c66fa3d2-435c-ec11-a9f1-9440c9be2c51'
     # filenames = ['output/ReportSimpleMalariaTransmissionJSON.json']
     filenames = ['output/InsetChart.json']
     analyzers = [TimeseriesAnalyzer(filenames=filenames)]
 
-    manager = AnalyzeManager(platform=platform, ids=[(sim_id, ItemType.SIMULATION)], analyzers=analyzers)
+    manager = AnalyzeManager(platform=platform, ids=[(exp_id, ItemType.EXPERIMENT)], analyzers=analyzers)
     manager.analyze()

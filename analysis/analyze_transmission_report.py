@@ -195,7 +195,9 @@ if __name__ == "__main__":
     platform = Platform('Calculon')
 
     # sim_id = '1b2eae64-8120-ec11-9ecd-9440c9bee941'
-    sim_id = 'b1680973-b420-ec11-9ecd-9440c9bee941'
+    exp_id = 'c66fa3d2-435c-ec11-a9f1-9440c9be2c51'
+    sim_id = 'f99849e1-435c-ec11-a9f1-9440c9be2c51'
+
     filenames = ['output/ReportSimpleMalariaTransmissionJSON.json']
     # filenames = ['output/InsetChart.json']
     # import json
