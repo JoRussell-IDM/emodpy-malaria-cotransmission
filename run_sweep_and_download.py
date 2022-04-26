@@ -136,6 +136,7 @@ def set_config_parameters(config):
 
     years = 30  # length of simulation, in years
     config.parameters.Simulation_Duration = years * 365
+    config.parameters.Vector_Sampling_Type = "TRACK_ALL_VECTORS"
     config.parameters.Malaria_Model = "MALARIA_MECHANISTIC_MODEL_WITH_CO_TRANSMISSION"
     config.parameters.Age_Initialization_Distribution_Type = "DISTRIBUTION_SIMPLE"
     config.parameters.Enable_Demographics_Reporting = 1
@@ -252,48 +253,6 @@ def general_sim():
         demog_builder=build_demographics
     )
 
-    # adding reporter
-    def add_custom_transmission_report(task, manifest,
-                                        start_day: int = 0,
-                                        duration_days: int = 365000,
-                                        nodes: list = None,
-                                        pretty_format: int = 0,
-                                        report_description: str = ""):
-        """
-        Adds ReportSimpleMalariaTransmissionJSON report to the simulation.
-        See class definition for description of the report.
-
-        Args:
-            task: task to which to add the reporter, if left as None, reporter is returned (used for unittests)
-            manifest: schema path file
-            start_day: the day to start collecting data for the report.
-            duration_days: The duration of simulation days over which to report events. The report will stop
-                collecting data when the simulation day is greater than Start_Day + Duration_Days
-            nodes: list of nodes for which to collect data for the report
-            pretty_format: if 1(true) sets pretty JSON formatting, which includes carriage returns, line feeds, and spaces
-                for easier readability. The default, 0 (false), saves space where everything is on one line.
-            report_description: adds the description to the filename of the report to differentiate it from others
-
-        Returns:
-            Nothing
-        """
-
-        reporter = ReportSimpleMalariaTransmissionJSON()  # Create the reporter
-
-        def rec_config_builder(params):  # not used yet
-            params.Start_Day = start_day
-            params.Duration_Days = duration_days
-            params.Nodeset_Config = utils.do_nodes(manifest.schema_file, nodes)
-            params.Pretty_Format = pretty_format
-            params.Report_Description = report_description
-            params.Include_Human_To_Vector_Transmission = 0
-            return params
-
-        reporter.config(rec_config_builder, manifest)
-        if task:
-            task.reporters.add_reporter(reporter)
-        else:  # assume we're running a unittest
-            return reporter
 
     add_malaria_transmission_report(task, manifest, start_day=report_start)
     # add_custom_transmission_report(task, manifest, start_day=report_start, duration_days=report_duration)
